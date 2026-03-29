@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html lang="pt-BR" class="scroll-smooth">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MESS | DJ Select</title>
-    
+
     <!-- Tailwind CSS Setup -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
+
     <!-- Icons -->
     <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
 
@@ -16,23 +17,25 @@
     <link rel="modulepreload" href="https://unpkg.com/@splinetool/runtime/build/runtime.js">
     <script type="module">
         import { Application } from 'https://unpkg.com/@splinetool/runtime/build/runtime.js';
-        
+
         // Inicializa o canvas e adiciona um listener para remover o placeholder ao concluir o carregamento
         const canvas = document.getElementById('canvas3d');
         const app = new Application(canvas);
-        
+
         app.load('./scene.splinecode').then(() => {
             // Cena carregada: some com o esqueleto falso instantâneo
             const placeholder = document.getElementById('spline-placeholder');
-            if(placeholder) placeholder.style.opacity = '0';
+            if (placeholder) placeholder.style.opacity = '0';
         });
     </script>
 
     <!-- Typography -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@200;300;400;500;600&display=swap" rel="stylesheet">
-    
+    <link
+        href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@200;300;400;500;600&display=swap"
+        rel="stylesheet">
+
     <!-- Configure Design System Tokens -->
     <script>
         tailwind.config = {
@@ -64,7 +67,7 @@
             }
         }
     </script>
-    
+
     <style>
         body {
             background-color: #030303;
@@ -72,7 +75,7 @@
             font-family: 'Manrope', sans-serif;
             overflow-x: hidden;
         }
-        
+
         /* 1. Surfaces & Materials */
         .noise-overlay {
             position: fixed;
@@ -88,7 +91,7 @@
         .ambient-bloom {
             position: absolute;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(138,16,36,0.08) 0%, rgba(0,0,0,0) 70%);
+            background: radial-gradient(circle, rgba(138, 16, 36, 0.08) 0%, rgba(0, 0, 0, 0) 70%);
             pointer-events: none;
             filter: blur(80px);
             z-index: 0;
@@ -110,6 +113,7 @@
             overflow: hidden;
             transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
         }
+
         .btn-primary:hover {
             background: #ffffff;
             box-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
@@ -121,9 +125,11 @@
             color: #f5f6f8;
             transition: border-color 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1);
         }
+
         .btn-ghost:hover {
             border-color: rgba(255, 255, 255, 0.4);
-            box-shadow: 0 0 30px rgba(138, 16, 36, 0.1); /* Subtle Crimson Glow */
+            box-shadow: 0 0 30px rgba(138, 16, 36, 0.1);
+            /* Subtle Crimson Glow */
         }
 
         .glass-blur {
@@ -137,17 +143,32 @@
         .reveal {
             opacity: 0;
             transform: translateY(40px);
-            animation: cinematicReveal 1.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            transition: opacity 1.6s cubic-bezier(0.16, 1, 0.3, 1), transform 1.6s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        
-        .delay-100 { animation-delay: 0.1s; }
-        .delay-200 { animation-delay: 0.2s; }
-        .delay-300 { animation-delay: 0.3s; }
-        .delay-400 { animation-delay: 0.4s; }
-        .delay-500 { animation-delay: 0.5s; }
 
-        @keyframes cinematicReveal {
-            to { opacity: 1; transform: translateY(0); }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .delay-100 {
+            transition-delay: 0.1s;
+        }
+
+        .delay-200 {
+            transition-delay: 0.2s;
+        }
+
+        .delay-300 {
+            transition-delay: 0.3s;
+        }
+
+        .delay-400 {
+            transition-delay: 0.4s;
+        }
+
+        .delay-500 {
+            transition-delay: 0.5s;
         }
 
         .fade-in {
@@ -157,7 +178,9 @@
         }
 
         @keyframes slowFade {
-            to { opacity: 1; }
+            to {
+                opacity: 1;
+            }
         }
 
         /* Responsive Center Display Utilities */
@@ -169,93 +192,114 @@
         }
     </style>
 </head>
+
 <body class="selection:bg-crimson/30 selection:text-white">
 
     <!-- Texture layer -->
     <div class="noise-overlay"></div>
 
     <!-- Premium Header -->
-    <header class="fixed top-0 w-full z-50 px-6 md:px-12 py-8 flex flex-row items-center justify-between mix-blend-difference fade-in">
+    <header
+        class="fixed top-0 w-full z-50 px-6 md:px-12 py-8 flex flex-row items-center justify-between mix-blend-difference fade-in">
         <!-- Brand -->
-        <div class="text-[10px] md:text-xs tracking-superwide uppercase text-white font-medium">
+        <a href="#home" class="text-[10px] md:text-xs tracking-superwide uppercase text-white font-medium hover:text-chrome-light transition-colors cursor-pointer">
             MESS
-        </div>
-        
+        </a>
+
         <!-- Desktop Nav -->
-        <div class="hidden md:flex gap-8 lg:gap-12 text-[9px] tracking-widest uppercase text-chrome-dark hover:*:text-chrome-light *:transition-colors">
+        <div
+            class="hidden md:flex gap-8 lg:gap-12 text-[9px] tracking-widest uppercase text-chrome-dark hover:*:text-chrome-light *:transition-colors">
             <a href="#">Sets</a>
-            <a href="#">Sobre</a>
-            <a href="#">Agenda</a>
-            <a href="#">Contato</a>
+            <a href="#sobre">Sobre</a>
+            <a href="#agenda">Agenda</a>
+            <a href="#contato">Contato</a>
         </div>
 
         <!-- Action Contact -->
-        <a href="#" class="text-[9px] tracking-widest uppercase text-white border border-white/10 px-6 py-3 hover:bg-white hover:text-deep hover:border-white transition-all duration-300 cursor-pointer">
+        <a href="#contato"
+            class="text-[9px] tracking-widest uppercase text-white border border-white/10 px-6 py-3 hover:bg-white hover:text-deep hover:border-white transition-all duration-300 cursor-pointer">
             Booking Direto
         </a>
     </header>
 
     <!-- MAIN HERO SECTION -->
-    <main class="relative w-full h-[100dvh] min-h-[800px] flex items-center bg-deep overflow-hidden">
-        
+    <main id="home" class="relative w-full h-[100dvh] min-h-[800px] flex items-center bg-deep overflow-hidden">
+
         <!-- Ambient Lighting & Atmospheric Effects -->
         <div class="ambient-bloom w-[60vw] h-[60vw] top-0 right-0 opacity-40"></div>
         <div class="ambient-bloom w-[40vw] h-[40vw] bottom-0 left-0 opacity-30"></div>
 
         <!-- 3D Scene / Sculptural Support Element -->
-        <div class="fixed inset-0 z-0 pointer-events-auto flex justify-center items-center mix-blend-screen scale-[1.02] bg-[radial-gradient(circle_at_center,rgba(20,20,30,0.8)_0%,_transparent_60%)]">
-            
+        <div
+            class="fixed inset-0 z-0 pointer-events-auto flex justify-center items-center mix-blend-screen scale-[1.02] bg-[radial-gradient(circle_at_center,rgba(20,20,30,0.8)_0%,_transparent_60%)]">
+
             <!-- Atmospheric Placeholder -->
-            <div id="spline-placeholder" class="absolute inset-0 flex justify-center items-center z-0 transition-opacity duration-700 pointer-events-none">
-                <div class="absolute right-0 w-[50vw] h-[50vw] bg-gradient-to-tr from-white/5 via-chrome-dark/20 to-transparent rounded-full blur-[120px] animate-pulse"></div>
+            <div id="spline-placeholder"
+                class="absolute inset-0 flex justify-center items-center z-0 transition-opacity duration-700 pointer-events-none">
+                <div
+                    class="absolute right-0 w-[50vw] h-[50vw] bg-gradient-to-tr from-white/5 via-chrome-dark/20 to-transparent rounded-full blur-[120px] animate-pulse">
+                </div>
             </div>
 
             <!-- Native Raw Canvas -->
-            <canvas id="canvas3d" class="w-full h-full block outline-none opacity-85 relative z-10"></canvas>
-            
+            <canvas id="canvas3d"
+                class="w-full h-full block outline-none opacity-90 contrast-125 saturate-50 relative z-10"></canvas>
+
             <!-- Atmospheric Scrims: Ghost Editorial Layer over Background Text -->
-            <div class="absolute inset-0 bg-gradient-to-r from-[#030303] via-[#030303]/60 to-transparent opacity-90 pointer-events-none z-20"></div>
-            <div class="absolute inset-0 bg-gradient-to-b from-[#030303]/40 via-transparent to-[#030303]/90 opacity-90 pointer-events-none z-20"></div>
+            <div
+                class="absolute inset-0 bg-gradient-to-r from-[#030303] via-[#030303]/60 to-transparent opacity-90 pointer-events-none z-20">
+            </div>
+            <div
+                class="absolute inset-0 bg-gradient-to-b from-[#030303]/40 via-transparent to-[#030303]/90 opacity-90 pointer-events-none z-20">
+            </div>
             <!-- Minimal Blur Filter for depth -->
             <div class="absolute inset-0 backdrop-blur-[2px] opacity-100 pointer-events-none z-20"></div>
         </div>
 
         <!-- Content Area (Asymmetrical & Left-Aligned) -->
-        <div class="relative z-10 w-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-24 flex flex-col items-start text-left pointer-events-none mt-16 lg:mt-24">
-            
+        <div
+            class="relative z-10 w-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-24 flex flex-col items-start text-left pointer-events-none mt-16 lg:mt-24">
+
             <!-- Eyebrow / Kicker -->
             <div class="reveal flex items-center gap-4 mb-8 md:mb-12">
                 <span class="w-10 md:w-16 h-[1px] bg-crimson"></span>
-                <span class="font-sans text-[9px] md:text-[10px] uppercase tracking-[0.4em] text-white/70 drop-shadow-md">
+                <span
+                    class="font-sans text-[9px] md:text-[10px] uppercase tracking-[0.4em] text-white/70 drop-shadow-md">
                     DJ Select · Campo Mourão, PR
                 </span>
             </div>
 
             <!-- Primary Brand Headline -->
-            <h1 class="reveal delay-100 font-display text-8xl md:text-[160px] lg:text-[200px] xl:text-[240px] leading-[0.8] text-white tracking-widest mb-10 chrome-text drop-shadow-[0_15px_40px_rgba(0,0,0,1)] pointer-events-auto -ml-1 md:-ml-2">
+            <h1
+                class="reveal delay-100 font-display text-8xl md:text-[160px] lg:text-[200px] xl:text-[240px] leading-[0.8] text-white tracking-widest mb-10 chrome-text drop-shadow-[0_15px_40px_rgba(0,0,0,1)] pointer-events-auto -ml-1 md:-ml-2">
                 MESS
             </h1>
 
             <!-- Supporting Text -->
-            <p class="reveal delay-200 font-sans text-[13px] md:text-sm lg:text-[15px] font-light text-chrome-light max-w-[360px] md:max-w-[420px] leading-loose mb-12 lg:mb-16 drop-shadow-[0_4px_10px_rgba(0,0,0,0.8)]">
+            <p
+                class="reveal delay-200 font-sans text-[13px] md:text-sm lg:text-[15px] font-light text-chrome-light max-w-[360px] md:max-w-[420px] leading-loose mb-12 lg:mb-16 drop-shadow-[0_4px_10px_rgba(0,0,0,0.8)]">
                 Afro House, Melodic e Techno em uma experiência de pista imersiva.
             </p>
 
             <!-- CTAs -->
-            <div class="reveal delay-300 flex flex-col sm:flex-row items-start sm:items-center gap-4 md:gap-6 w-full pointer-events-auto">
+            <div
+                class="reveal delay-300 flex flex-col sm:flex-row items-start sm:items-center gap-4 md:gap-6 w-full pointer-events-auto">
                 <!-- Primary Solid CTA -->
-                <a href="#" class="btn-primary w-full sm:w-auto font-sans font-medium text-[10px] tracking-superwide uppercase px-12 py-[22px] text-center">
+                <a href="#agenda"
+                    class="btn-primary w-full sm:w-auto font-sans font-medium text-[10px] tracking-superwide uppercase px-12 py-[22px] text-center">
                     Ouvir sets
                 </a>
-                
+
                 <!-- Secondary Premium Ghost CTA -->
-                <a href="#" class="btn-ghost w-full sm:w-auto font-sans font-medium text-[10px] tracking-superwide uppercase px-12 py-[22px] text-center bg-deep/50 backdrop-blur-md">
+                <a href="#contato"
+                    class="relative bg-transparent border border-white/20 text-chrome-light font-sans font-medium text-[10px] tracking-superwide uppercase px-12 py-[22px] text-center hover:border-white/60 hover:text-white transition-all duration-500 w-full sm:w-auto">
                     Booking
                 </a>
             </div>
 
             <!-- Microcopy -->
-            <div class="reveal delay-400 mt-16 md:mt-20 pointer-events-auto border-l border-white/10 pl-5 lg:pl-6 max-w-[240px]">
+            <div
+                class="reveal delay-400 mt-16 md:mt-20 pointer-events-auto border-l border-white/10 pl-5 lg:pl-6 max-w-[240px]">
                 <p class="font-sans text-[9px] leading-relaxed tracking-[0.3em] text-[#6e7280] uppercase">
                     Disponível para clubs, eventos e experiências autorais.
                 </p>
@@ -264,11 +308,461 @@
         </div>
 
         <!-- Subtle Bottom Frame Indicator -->
-        <div class="absolute bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-3 fade-in pointer-events-none opacity-50">
+        <div
+            class="absolute bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-3 fade-in pointer-events-none opacity-50">
             <div class="w-[1px] h-12 bg-gradient-to-b from-chrome-dark to-transparent"></div>
         </div>
 
     </main>
 
+    <!-- ABOUT / MANIFESTO SECTION -->
+    <section id="sobre" class="relative w-full bg-deep py-32 lg:py-48 px-6 md:px-12 lg:px-24 overflow-hidden">
+
+        <!-- Subtle Ambient Lighting -->
+        <div class="ambient-bloom w-[50vw] h-[50vw] top-0 left-[-20%] opacity-20"></div>
+
+        <div class="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24 relative z-10">
+
+            <!-- Left content (Text) -->
+            <div class="lg:col-span-8 flex flex-col justify-center">
+
+                <!-- Kicker -->
+                <div class="reveal flex items-center gap-4 mb-10 md:mb-12">
+                    <span class="w-8 h-[1px] bg-crimson"></span>
+                    <span class="font-sans text-[9px] md:text-[10px] uppercase tracking-[0.4em] text-chrome-dark">
+                        Sobre / Manifesto
+                    </span>
+                </div>
+
+                <!-- Headline -->
+                <h2
+                    class="reveal delay-100 font-display text-5xl md:text-6xl lg:text-[80px] xl:text-[100px] leading-[0.95] text-white tracking-widest mb-10 md:mb-12">
+                    MESS <span class="chrome-text block">constrói sets como experiência.</span>
+                </h2>
+
+                <!-- Body Copy -->
+                <div class="reveal delay-200 border-l border-white/10 pl-6 md:pl-8 py-2 mt-4">
+                    <p
+                        class="font-sans text-[15px] md:text-lg lg:text-[19px] font-light text-chrome-light leading-[2.2] max-w-lg">
+                        Entre tensão, ritmo e atmosfera, sua curadoria atravessa <span
+                            class="text-white font-medium">Afro House, Melodic e Techno</span> com uma assinatura
+                        noturna, magnética e imersiva.
+                        <br><br>
+                        Cada transição é pensada para conduzir a pista com profundidade, intenção e presença.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Right content (Metadata & Accent) -->
+            <div
+                class="lg:col-span-4 flex flex-col justify-start lg:pl-20 border-t lg:border-t-0 lg:border-l border-white/5 pt-12 lg:pt-16 mt-16 lg:mt-0">
+
+                <!-- Metadata Labels -->
+                <div class="space-y-10 reveal delay-300">
+                    <div class="group pb-2">
+                        <span
+                            class="block text-[8px] uppercase tracking-[0.3em] text-[#6e7280] mb-2 group-hover:text-chrome-light transition-colors">01.
+                            Abordagem</span>
+                        <p class="font-sans text-[13px] md:text-sm font-light text-chrome-light tracking-wide">Curadoria
+                            sonora</p>
+                    </div>
+                    <div class="w-full h-[1px] bg-white/5"></div>
+
+                    <div class="group pb-2">
+                        <span
+                            class="block text-[8px] uppercase tracking-[0.3em] text-[#6e7280] mb-2 group-hover:text-chrome-light transition-colors">02.
+                            Foco</span>
+                        <p class="font-sans text-[13px] md:text-sm font-light text-chrome-light tracking-wide">
+                            Experiência de pista</p>
+                    </div>
+                    <div class="w-full h-[1px] bg-white/5"></div>
+
+                    <div class="group pb-2">
+                        <span
+                            class="block text-[8px] uppercase tracking-[0.3em] text-[#6e7280] mb-2 group-hover:text-chrome-light transition-colors">03.
+                            Vibe</span>
+                        <p class="font-sans text-[13px] md:text-sm font-light text-chrome-light tracking-wide">Atmosfera
+                            noturna</p>
+                    </div>
+                    <div class="w-full h-[1px] bg-white/5"></div>
+
+                    <div class="group pb-2">
+                        <span
+                            class="block text-[8px] uppercase tracking-[0.3em] text-[#6e7280] mb-2 group-hover:text-chrome-light transition-colors">04.
+                            Assinatura</span>
+                        <p class="font-sans text-[13px] md:text-sm font-light text-chrome-light tracking-wide">
+                            Identidade autoral</p>
+                    </div>
+                </div>
+
+                <!-- Accent graphic -->
+                <div
+                    class="mt-16 sm:mt-20 w-12 h-12 border border-white/10 rounded-full flex items-center justify-center reveal delay-400">
+                    <iconify-icon icon="solar:soundwave-outline" class="text-xl text-chrome-dark"></iconify-icon>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- AGENDA SECTION -->
+    <section id="agenda"
+        class="relative w-full bg-deep py-32 lg:py-48 px-6 md:px-12 lg:px-24 border-t border-white/5 overflow-hidden">
+
+        <div class="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24 relative z-10">
+
+            <!-- Left Header (Sticky on Desktop) -->
+            <div class="lg:col-span-5 relative">
+                <div class="lg:sticky lg:top-32 flex flex-col">
+
+                    <!-- Kicker -->
+                    <div class="reveal flex items-center gap-4 mb-6 md:mb-8">
+                        <span class="w-8 h-[1px] bg-crimson"></span>
+                        <span class="font-sans text-[9px] md:text-[10px] uppercase tracking-[0.4em] text-chrome-dark">
+                            Agenda
+                        </span>
+                    </div>
+
+                    <!-- Headline -->
+                    <h2
+                        class="reveal delay-100 font-display text-5xl lg:text-[70px] xl:text-[85px] leading-[0.95] text-white tracking-widest mb-8 md:mb-12 max-w-md lg:-mt-2">
+                        Próximas aparições e <span class="chrome-text">experiências de pista.</span>
+                    </h2>
+
+                    <!-- Intro -->
+                    <div class="reveal delay-200 border-l border-white/10 pl-6 mt-2 max-w-md">
+                        <p class="font-sans text-lg md:text-[20px] font-light text-chrome-light leading-relaxed">
+                            Datas, clubes e locais onde a curadoria de <span class="text-white font-medium">MESS</span>
+                            encontra o espaço físico da pista.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Events List -->
+            <div class="lg:col-span-7 flex flex-col mt-4 lg:mt-0 relative lg:pl-16 xl:pl-24">
+
+                <!-- Event 01 -->
+                <article
+                    class="reveal delay-300 group relative border-t border-white/10 py-8 md:py-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6 hover:border-chrome transition-colors duration-500">
+                    <div class="flex flex-col sm:flex-row gap-4 sm:gap-10 sm:items-center flex-grow">
+                        <!-- Fixed width date for perfect alignment -->
+                        <div
+                            class="w-full sm:w-28 md:w-36 flex-shrink-0 font-display text-5xl md:text-[70px] text-chrome-dark group-hover:text-white transition-colors duration-500 leading-none">
+                            18<span
+                                class="text-2xl md:text-3xl text-chrome-dark group-hover:text-chrome transition-colors">.05</span>
+                        </div>
+                        <div class="flex flex-col justify-center sm:border-l border-white/10 sm:pl-8">
+                            <h3
+                                class="font-sans text-xl md:text-2xl font-light text-chrome-light tracking-wide group-hover:translate-x-2 transition-transform duration-500">
+                                Soma Club
+                            </h3>
+                            <span class="font-sans text-[9px] uppercase tracking-[0.3em] text-[#6e7280] mt-1 md:mt-2">
+                                Curitiba, PR
+                            </span>
+                        </div>
+                    </div>
+                    <div
+                        class="flex flex-row sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-4 w-full sm:w-auto mt-2 sm:mt-0">
+                        <span class="font-sans text-[9px] uppercase tracking-widest text-[#6e7280] transition-colors">
+                            Confirmado
+                        </span>
+                    </div>
+                </article>
+
+                <!-- Event 02 -->
+                <article
+                    class="reveal delay-400 group relative border-t border-white/10 py-8 md:py-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6 hover:border-chrome transition-colors duration-500">
+                    <div class="flex flex-col sm:flex-row gap-4 sm:gap-10 sm:items-center flex-grow">
+                        <div
+                            class="w-full sm:w-28 md:w-36 flex-shrink-0 font-display text-5xl md:text-[70px] text-chrome-dark group-hover:text-white transition-colors duration-500 leading-none">
+                            01<span
+                                class="text-2xl md:text-3xl text-chrome-dark group-hover:text-chrome transition-colors">.06</span>
+                        </div>
+                        <div class="flex flex-col justify-center sm:border-l border-white/10 sm:pl-8">
+                            <h3
+                                class="font-sans text-xl md:text-2xl font-light text-chrome-light tracking-wide group-hover:translate-x-2 transition-transform duration-500">
+                                Vault Session
+                            </h3>
+                            <span class="font-sans text-[9px] uppercase tracking-[0.3em] text-[#6e7280] mt-1 md:mt-2">
+                                Londrina, PR
+                            </span>
+                        </div>
+                    </div>
+                    <div
+                        class="flex flex-row sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-4 w-full sm:w-auto mt-2 sm:mt-0">
+                        <span class="font-sans text-[9px] uppercase tracking-widest text-[#6e7280] transition-colors">
+                            Confirmado
+                        </span>
+                    </div>
+                </article>
+
+                <!-- Event 03 -->
+                <article
+                    class="reveal delay-500 group relative border-t border-white/10 py-8 md:py-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6 hover:border-chrome transition-colors duration-500">
+                    <div class="flex flex-col sm:flex-row gap-4 sm:gap-10 sm:items-center flex-grow">
+                        <div
+                            class="w-full sm:w-28 md:w-36 flex-shrink-0 font-display text-5xl md:text-[70px] text-chrome-dark group-hover:text-white transition-colors duration-500 leading-none">
+                            15<span
+                                class="text-2xl md:text-3xl text-chrome-dark group-hover:text-chrome transition-colors">.06</span>
+                        </div>
+                        <div class="flex flex-col justify-center sm:border-l border-white/10 sm:pl-8">
+                            <h3
+                                class="font-sans text-xl md:text-2xl font-light text-chrome-light tracking-wide group-hover:translate-x-2 transition-transform duration-500">
+                                Noctra
+                            </h3>
+                            <span class="font-sans text-[9px] uppercase tracking-[0.3em] text-[#6e7280] mt-1 md:mt-2">
+                                Maringá, PR
+                            </span>
+                        </div>
+                    </div>
+                    <div
+                        class="flex flex-row sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-4 w-full sm:w-auto mt-2 sm:mt-0">
+                        <span
+                            class="font-sans text-[9px] uppercase tracking-[0.3em] text-chrome-light group-hover:text-white transition-colors px-3 py-1 border border-white/20 rounded-sm">
+                            Últimos Slots
+                        </span>
+                    </div>
+                </article>
+
+                <!-- Event 04 | Highlight Block -->
+                <article
+                    class="reveal group relative border-y border-white/20 py-16 md:py-20 mt-8 md:mt-12 overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-12 hover:bg-white/[0.02] transition-colors duration-700">
+
+                    <!-- Ambient Bloom Inner -->
+                    <div
+                        class="absolute inset-0 bg-[radial-gradient(ellipse_at_center_right,rgba(138,16,36,0.1),transparent_50%)] opacity-80 group-hover:opacity-100 transition-all duration-1000 pointer-events-none z-0">
+                    </div>
+
+                    <!-- Flowing Layout -->
+                    <div class="relative z-10 flex flex-col md:flex-row gap-8 md:gap-12 md:items-center flex-grow">
+
+                        <!-- Colossal Date -->
+                        <div
+                            class="w-full sm:w-32 md:w-56 flex-shrink-0 font-display text-[80px] md:text-[110px] text-transparent bg-clip-text bg-gradient-to-b from-white to-white/10 leading-none drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)]">
+                            29<span class="text-4xl md:text-6xl text-white/50">.06</span>
+                        </div>
+
+                        <!-- Rich Info -->
+                        <div class="flex flex-col md:border-l border-white/20 md:pl-12">
+                            <span
+                                class="font-sans text-[9px] uppercase tracking-[0.4em] text-crimson-400 flex items-center gap-3 mb-4">
+                                <span
+                                    class="w-1.5 h-1.5 rounded-full bg-crimson shadow-[0_0_10px_rgba(138,16,36,0.8)] animate-pulse"></span>
+                                Especial
+                            </span>
+
+                            <h3
+                                class="font-display text-4xl md:text-[60px] text-white leading-[0.9] group-hover:chrome-text transition-all duration-700 mt-2">
+                                Rooftop Session<br>Privada
+                            </h3>
+                            <span class="font-sans text-xs uppercase tracking-[0.3em] text-white/50 mt-5">
+                                São Paulo, SP
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Premium High-Level CTA right aligned -->
+                    <div class="relative z-10 flex justify-start md:justify-end mt-4 md:mt-0 w-full md:w-auto">
+                        <a href="#contato"
+                            class="btn-primary flex items-center justify-center gap-3 w-full sm:w-auto font-sans font-medium text-[9px] tracking-superwide uppercase px-12 py-[22px] shadow-[0_0_40px_rgba(255,255,255,0.1)] hover:shadow-[0_0_50px_rgba(255,255,255,0.2)]">
+                            Solicitar acesso
+                        </a>
+                    </div>
+                </article>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- CONTACT / BOOKING SECTION -->
+    <section id="contato"
+        class="relative w-full bg-[#020202] py-32 lg:py-48 px-6 md:px-12 lg:px-24 border-t border-white/5 overflow-hidden">
+
+        <!-- Subtle Ambient Lighting -->
+        <div class="ambient-bloom w-[60vw] h-[60vw] bottom-[-20%] right-[-10%] opacity-20 pointer-events-none z-0">
+        </div>
+
+        <div class="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24 relative z-10">
+
+            <!-- Left Info Block -->
+            <div class="lg:col-span-5 flex flex-col justify-between">
+
+                <div class="flex flex-col">
+                    <!-- Kicker -->
+                    <div class="reveal flex items-center gap-4 mb-10 md:mb-12">
+                        <span class="w-8 h-[1px] bg-crimson"></span>
+                        <span class="font-sans text-[9px] md:text-[10px] uppercase tracking-[0.4em] text-chrome-dark">
+                            Booking / Contato
+                        </span>
+                    </div>
+
+                    <!-- Headline -->
+                    <h2
+                        class="reveal delay-100 font-display text-5xl lg:text-[70px] xl:text-[85px] leading-none text-white tracking-widest mb-10 md:mb-12 max-w-lg lg:-ml-1">
+                        Vamos construir <br>
+                        <span class="chrome-text">a próxima experiência.</span>
+                    </h2>
+
+                    <!-- Intro -->
+                    <div class="reveal delay-200 border-l border-white/10 pl-6 mt-4 max-w-md">
+                        <p class="font-sans text-lg md:text-[20px] font-light text-chrome-light leading-relaxed">
+                            Para <span class="text-white font-medium">clubs, eventos e collabs</span> autorais. Entre em
+                            contato para validarmos disponibilidade e datas.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Contact Details List (Bottom Left) -->
+                <div class="reveal delay-300 mt-20 lg:mt-32 flex flex-col gap-10">
+                    <div class="flex flex-col">
+                        <span class="font-sans text-[8px] uppercase tracking-[0.4em] text-[#6e7280] mb-3">E-mail
+                            Direto</span>
+                        <a href="mailto:booking@messmusic.com"
+                            class="font-sans text-[13px] tracking-wide text-chrome-light hover:text-white transition-colors relative group w-max">
+                            booking@messmusic.com
+                            <span
+                                class="absolute -bottom-1 left-0 w-0 h-[1px] bg-white transition-all duration-500 group-hover:w-full"></span>
+                        </a>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="font-sans text-[8px] uppercase tracking-[0.4em] text-[#6e7280] mb-3">Acervo
+                            Digital</span>
+                        <a href="https://www.instagram.com/mess.dj_/" target="_blank"
+                            class="font-sans text-[13px] tracking-wide text-chrome-light hover:text-white transition-colors relative group w-max">
+                            @mess.dj_
+                            <span
+                                class="absolute -bottom-1 left-0 w-0 h-[1px] bg-white transition-all duration-500 group-hover:w-full"></span>
+                        </a>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="font-sans text-[8px] uppercase tracking-[0.4em] text-[#6e7280] mb-3">Atuação /
+                            Base</span>
+                        <p class="font-sans text-[13px] tracking-wide text-chrome-dark">
+                            Campo Mourão & Região
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Right Form Block (The Application) -->
+            <div class="lg:col-span-7 flex flex-col mt-16 lg:mt-0 relative lg:pl-12 xl:pl-20 py-2">
+
+                <form
+                    class="reveal delay-400 w-full flex flex-col gap-12 border border-white/15 bg-white/[0.02] backdrop-blur-md p-8 md:p-12 lg:p-16 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.8)] transition-all duration-700 hover:border-white/30">
+
+                    <!-- Form Header -->
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="font-display text-5xl text-white">Nova Solicitação.</span>
+                        <span
+                            class="font-sans text-[9px] uppercase tracking-[0.4em] text-white/70 flex items-center gap-3 border border-white/20 px-4 py-2 bg-white/5">
+                            <span
+                                class="w-1.5 h-1.5 rounded-full bg-crimson animate-pulse shadow-[0_0_10px_rgba(138,16,36,0.8)]"></span>
+                            Aberto
+                        </span>
+                    </div>
+
+                    <div class="w-full h-[1px] bg-gradient-to-r from-white/20 to-transparent -mt-5 mb-6"></div>
+
+                    <!-- Input Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-12">
+                        <!-- Nome -->
+                        <div class="flex flex-col relative group">
+                            <label
+                                class="font-sans text-[9px] uppercase tracking-[0.3em] text-[#9ca3af] mb-3 group-focus-within:text-white transition-colors">Nome
+                                / Contato</label>
+                            <input type="text" placeholder="Seu nome ou marca"
+                                class="w-full bg-transparent border-b border-white/30 pb-3 font-display text-2xl lg:text-3xl text-white placeholder-white/20 focus:outline-none focus:border-white transition-all rounded-none"
+                                required>
+                        </div>
+
+                        <!-- Email -->
+                        <div class="flex flex-col relative group">
+                            <label
+                                class="font-sans text-[9px] uppercase tracking-[0.3em] text-[#9ca3af] mb-3 group-focus-within:text-white transition-colors">Endereço
+                                de E-mail</label>
+                            <input type="email" placeholder="seu@email.com"
+                                class="w-full bg-transparent border-b border-white/30 pb-3 font-display text-2xl lg:text-3xl text-white placeholder-white/20 focus:outline-none focus:border-white transition-all rounded-none"
+                                required>
+                        </div>
+
+                        <!-- Evento -->
+                        <div class="flex flex-col relative group">
+                            <label
+                                class="font-sans text-[9px] uppercase tracking-[0.3em] text-[#9ca3af] mb-3 group-focus-within:text-white transition-colors">Evento
+                                / Club</label>
+                            <input type="text" placeholder="Nome do clube ou festa"
+                                class="w-full bg-transparent border-b border-white/30 pb-3 font-display text-2xl lg:text-3xl text-white placeholder-white/20 focus:outline-none focus:border-white transition-all rounded-none"
+                                required>
+                        </div>
+
+                        <!-- Data -->
+                        <div class="flex flex-col relative group">
+                            <label
+                                class="font-sans text-[9px] uppercase tracking-[0.3em] text-[#9ca3af] mb-3 group-focus-within:text-white transition-colors">Data
+                                Prevista</label>
+                            <input type="text" placeholder="DD.MM.AA"
+                                class="w-full bg-transparent border-b border-white/30 pb-3 font-display text-2xl lg:text-3xl text-white placeholder-white/20 focus:outline-none focus:border-white transition-all rounded-none">
+                        </div>
+                    </div>
+
+                    <!-- Mensagem -->
+                    <div class="flex flex-col relative group mt-4">
+                        <label
+                            class="font-sans text-[9px] uppercase tracking-[0.3em] text-[#9ca3af] mb-3 group-focus-within:text-white transition-colors">Proposta
+                            & Detalhes</label>
+                        <textarea rows="2" placeholder="Descreva sua proposta ou visão para o evento..."
+                            class="w-full bg-transparent border-b border-white/30 pb-3 pt-2 font-sans font-light text-base lg:text-lg text-white placeholder-white/20 focus:outline-none focus:border-white transition-all resize-none rounded-none"></textarea>
+                    </div>
+
+                    <!-- Submit -->
+                    <div class="mt-8 flex justify-start">
+                        <button type="submit"
+                            class="btn-primary flex items-center justify-between gap-6 font-sans font-medium text-[10px] tracking-[0.3em] uppercase px-12 py-[22px] shadow-[0_0_40px_rgba(255,255,255,0.1)] hover:shadow-[0_0_60px_rgba(255,255,255,0.25)] w-full transition-all group/btn overflow-hidden border border-white/10">
+                            <span>Solicitar Booking</span>
+                            <iconify-icon icon="solar:arrow-right-linear"
+                                class="text-xl group-hover/btn:translate-x-2 transition-transform duration-500"></iconify-icon>
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer
+        class="w-full bg-[#020202] py-8 border-t border-white/5 flex flex-col md:flex-row items-center justify-between px-6 md:px-12 lg:px-24">
+        <span class="font-display text-2xl text-chrome tracking-widest">MESS</span>
+        <span class="font-sans text-[8px] uppercase tracking-[0.4em] text-[#6e7280] mt-4 md:mt-0">© 2026. Todos os
+            direitos reservados.</span>
+    </footer>
+
+    <!-- Scroll Interaction Script -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                        observer.unobserve(entry.target); // Anima apenas 1 vez
+                    }
+                });
+            }, {
+                root: null,
+                threshold: 0.15,
+                rootMargin: "0px 0px -50px 0px"
+            });
+
+            document.querySelectorAll('.reveal').forEach((el) => {
+                observer.observe(el);
+            });
+        });
+    </script>
 </body>
+
 </html>
