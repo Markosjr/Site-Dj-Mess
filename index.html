@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MESS | DJ Select</title>
+    
+    <!-- Tailwind CSS Setup -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Icons -->
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+
+    <!-- Spline Runtime (Instant Rendering & Preloading) -->
+    <link rel="preload" href="./scene.splinecode" as="fetch" crossorigin="anonymous">
+    <link rel="modulepreload" href="https://unpkg.com/@splinetool/runtime/build/runtime.js">
+    <script type="module">
+        import { Application } from 'https://unpkg.com/@splinetool/runtime/build/runtime.js';
+        
+        // Inicializa o canvas e adiciona um listener para remover o placeholder ao concluir o carregamento
+        const canvas = document.getElementById('canvas3d');
+        const app = new Application(canvas);
+        
+        app.load('./scene.splinecode').then(() => {
+            // Cena carregada: some com o esqueleto falso instantâneo
+            const placeholder = document.getElementById('spline-placeholder');
+            if(placeholder) placeholder.style.opacity = '0';
+        });
+    </script>
+
+    <!-- Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Configure Design System Tokens -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        deep: '#030303',
+                        graphite: '#0C0D10',
+                        surface: '#121318',
+                        crimson: {
+                            DEFAULT: '#8A1024',
+                            400: '#b01530',
+                        },
+                        chrome: {
+                            light: '#f5f6f8',
+                            DEFAULT: '#b8bcc6',
+                            dark: '#6e7280'
+                        }
+                    },
+                    fontFamily: {
+                        display: ['"Instrument Serif"', 'serif'],
+                        sans: ['"Manrope"', 'sans-serif']
+                    },
+                    letterSpacing: {
+                        widest: '.2em',
+                        superwide: '.3em'
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            background-color: #030303;
+            color: #f5f6f8;
+            font-family: 'Manrope', sans-serif;
+            overflow-x: hidden;
+        }
+        
+        /* 1. Surfaces & Materials */
+        .noise-overlay {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.035;
+            background-image: url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.75" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
+        }
+
+        .ambient-bloom {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(138,16,36,0.08) 0%, rgba(0,0,0,0) 70%);
+            pointer-events: none;
+            filter: blur(80px);
+            z-index: 0;
+        }
+
+        .chrome-text {
+            background: linear-gradient(180deg, #FFFFFF 0%, #C8CCD6 45%, #686C78 60%, #FFFFFF 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+        }
+
+        /* 2. Component System */
+        .btn-primary {
+            background: #f5f6f8;
+            color: #030303;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .btn-primary:hover {
+            background: #ffffff;
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-ghost {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #f5f6f8;
+            transition: border-color 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .btn-ghost:hover {
+            border-color: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 0 30px rgba(138, 16, 36, 0.1); /* Subtle Crimson Glow */
+        }
+
+        .glass-blur {
+            background: rgba(12, 13, 16, 0.3);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        /* 3. Motion System */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            animation: cinematicReveal 1.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        
+        .delay-100 { animation-delay: 0.1s; }
+        .delay-200 { animation-delay: 0.2s; }
+        .delay-300 { animation-delay: 0.3s; }
+        .delay-400 { animation-delay: 0.4s; }
+        .delay-500 { animation-delay: 0.5s; }
+
+        @keyframes cinematicReveal {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            opacity: 0;
+            animation: slowFade 3s ease-in-out forwards;
+            animation-delay: 1s;
+        }
+
+        @keyframes slowFade {
+            to { opacity: 1; }
+        }
+
+        /* Responsive Center Display Utilities */
+        /* Spline is now fully unmasked */
+        @media (max-width: 1024px) {
+            .mobile-padding {
+                padding-top: 10vh;
+            }
+        }
+    </style>
+</head>
+<body class="selection:bg-crimson/30 selection:text-white">
+
+    <!-- Texture layer -->
+    <div class="noise-overlay"></div>
+
+    <!-- Premium Header -->
+    <header class="fixed top-0 w-full z-50 px-6 md:px-12 py-8 flex flex-row items-center justify-between mix-blend-difference fade-in">
+        <!-- Brand -->
+        <div class="text-[10px] md:text-xs tracking-superwide uppercase text-white font-medium">
+            MESS
+        </div>
+        
+        <!-- Desktop Nav -->
+        <div class="hidden md:flex gap-8 lg:gap-12 text-[9px] tracking-widest uppercase text-chrome-dark hover:*:text-chrome-light *:transition-colors">
+            <a href="#">Sets</a>
+            <a href="#">Sobre</a>
+            <a href="#">Agenda</a>
+            <a href="#">Contato</a>
+        </div>
+
+        <!-- Action Contact -->
+        <a href="#" class="text-[9px] tracking-widest uppercase text-white border border-white/10 px-6 py-3 hover:bg-white hover:text-deep hover:border-white transition-all duration-300 cursor-pointer">
+            Booking Direto
+        </a>
+    </header>
+
+    <!-- MAIN HERO SECTION -->
+    <main class="relative w-full h-[100dvh] min-h-[800px] flex items-center bg-deep overflow-hidden">
+        
+        <!-- Ambient Lighting & Atmospheric Effects -->
+        <div class="ambient-bloom w-[60vw] h-[60vw] top-0 right-0 opacity-40"></div>
+        <div class="ambient-bloom w-[40vw] h-[40vw] bottom-0 left-0 opacity-30"></div>
+
+        <!-- 3D Scene / Sculptural Support Element -->
+        <div class="fixed inset-0 z-0 pointer-events-auto flex justify-center items-center mix-blend-screen scale-[1.02] bg-[radial-gradient(circle_at_center,rgba(20,20,30,0.8)_0%,_transparent_60%)]">
+            
+            <!-- Atmospheric Placeholder -->
+            <div id="spline-placeholder" class="absolute inset-0 flex justify-center items-center z-0 transition-opacity duration-700 pointer-events-none">
+                <div class="absolute right-0 w-[50vw] h-[50vw] bg-gradient-to-tr from-white/5 via-chrome-dark/20 to-transparent rounded-full blur-[120px] animate-pulse"></div>
+            </div>
+
+            <!-- Native Raw Canvas -->
+            <canvas id="canvas3d" class="w-full h-full block outline-none opacity-85 relative z-10"></canvas>
+            
+            <!-- Atmospheric Scrims: Ghost Editorial Layer over Background Text -->
+            <div class="absolute inset-0 bg-gradient-to-r from-[#030303] via-[#030303]/60 to-transparent opacity-90 pointer-events-none z-20"></div>
+            <div class="absolute inset-0 bg-gradient-to-b from-[#030303]/40 via-transparent to-[#030303]/90 opacity-90 pointer-events-none z-20"></div>
+            <!-- Minimal Blur Filter for depth -->
+            <div class="absolute inset-0 backdrop-blur-[2px] opacity-100 pointer-events-none z-20"></div>
+        </div>
+
+        <!-- Content Area (Asymmetrical & Left-Aligned) -->
+        <div class="relative z-10 w-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-24 flex flex-col items-start text-left pointer-events-none mt-16 lg:mt-24">
+            
+            <!-- Eyebrow / Kicker -->
+            <div class="reveal flex items-center gap-4 mb-8 md:mb-12">
+                <span class="w-10 md:w-16 h-[1px] bg-crimson"></span>
+                <span class="font-sans text-[9px] md:text-[10px] uppercase tracking-[0.4em] text-white/70 drop-shadow-md">
+                    DJ Select · Campo Mourão, PR
+                </span>
+            </div>
+
+            <!-- Primary Brand Headline -->
+            <h1 class="reveal delay-100 font-display text-8xl md:text-[160px] lg:text-[200px] xl:text-[240px] leading-[0.8] text-white tracking-widest mb-10 chrome-text drop-shadow-[0_15px_40px_rgba(0,0,0,1)] pointer-events-auto -ml-1 md:-ml-2">
+                MESS
+            </h1>
+
+            <!-- Supporting Text -->
+            <p class="reveal delay-200 font-sans text-[13px] md:text-sm lg:text-[15px] font-light text-chrome-light max-w-[360px] md:max-w-[420px] leading-loose mb-12 lg:mb-16 drop-shadow-[0_4px_10px_rgba(0,0,0,0.8)]">
+                Afro House, Melodic e Techno em uma experiência de pista imersiva.
+            </p>
+
+            <!-- CTAs -->
+            <div class="reveal delay-300 flex flex-col sm:flex-row items-start sm:items-center gap-4 md:gap-6 w-full pointer-events-auto">
+                <!-- Primary Solid CTA -->
+                <a href="#" class="btn-primary w-full sm:w-auto font-sans font-medium text-[10px] tracking-superwide uppercase px-12 py-[22px] text-center">
+                    Ouvir sets
+                </a>
+                
+                <!-- Secondary Premium Ghost CTA -->
+                <a href="#" class="btn-ghost w-full sm:w-auto font-sans font-medium text-[10px] tracking-superwide uppercase px-12 py-[22px] text-center bg-deep/50 backdrop-blur-md">
+                    Booking
+                </a>
+            </div>
+
+            <!-- Microcopy -->
+            <div class="reveal delay-400 mt-16 md:mt-20 pointer-events-auto border-l border-white/10 pl-5 lg:pl-6 max-w-[240px]">
+                <p class="font-sans text-[9px] leading-relaxed tracking-[0.3em] text-[#6e7280] uppercase">
+                    Disponível para clubs, eventos e experiências autorais.
+                </p>
+            </div>
+
+        </div>
+
+        <!-- Subtle Bottom Frame Indicator -->
+        <div class="absolute bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-3 fade-in pointer-events-none opacity-50">
+            <div class="w-[1px] h-12 bg-gradient-to-b from-chrome-dark to-transparent"></div>
+        </div>
+
+    </main>
+
+</body>
+</html>
